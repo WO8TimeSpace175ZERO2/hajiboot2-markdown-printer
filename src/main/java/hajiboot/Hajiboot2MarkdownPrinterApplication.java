@@ -1,4 +1,4 @@
-package hajiboot.hajiboot2markdownprinter;
+package hajiboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
