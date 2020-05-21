@@ -2,23 +2,33 @@ package hajiboot;
 
 import org.springframework.web.client.RestTemplate;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import org.springframework.util.StreamUtils;
 
 
+//import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+@Component
+//@Online
+@ConditionalOnProperty(name = "hajiboot2.markdown.type", havingValue = "github")
 public class GitHubApiMarkdownRenderer implements MarkdownRenderer{
     private final RestTemplate restTemplate;
 
-    public GitHubApiMarkdownRenderer(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    //@Autowired
+    //public GitHubApiMarkdownRenderer(RestTemplate restTemplate) {
+    //public GitHubApiMarkdownRenderer(@Value("${github.access-token}") String accessToken ,
+    //		RestTemplateBuilder restTemplateBuilder) {
+    public GitHubApiMarkdownRenderer(GitHubProperties props ,
+            RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder
+                .interceptors((request, body, execution) -> { 
+                    request.getHeaders().add("Authorization", "token " + props.getAccessToken());
+                    return execution.execute(request, body);
+                }).build();
+
     }
 
 
